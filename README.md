@@ -100,6 +100,8 @@ pip install pandas matplotlib meteostat
 
 ## Disclaimer
 
-The code here has been generated using ChatGPT 4o, iterating multiple times, refining the prompts in order to fix errors and add improvements.  
+The code here has been generated using ChatGPT 4o, iterating multiple times, refining the prompts in order to fix errors and add improvements. 
 
 It may be correct.
+
+Time wasted on this:  3 hours.
