@@ -47,6 +47,22 @@ data['year'] = data.index.year
 data['month'] = data.index.month
 monthly_avg = data.groupby(['year', 'month'])['tavg'].mean().unstack(0)
 
+# Calculate mean difference between max and min temperature
+min_temps = monthly_avg.min(axis=0)
+max_temps = monthly_avg.max(axis=0)
+
+# Calculate the average of the differences for each year
+mean_temp_difference = (max_temps - min_temps).mean()
+
+# Find the months of max and min temperatures for each year
+min_temp_month = monthly_avg.idxmin(axis=0).mode()[0]  # Most common min month
+max_temp_month = monthly_avg.idxmax(axis=0).mode()[0]  # Most common max month
+
+# Month names
+month_names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+min_temp_month_name = month_names[min_temp_month - 1]
+max_temp_month_name = month_names[max_temp_month - 1]
+
 # Plot the graph
 plt.figure(figsize=(10, 6))
 
@@ -57,9 +73,15 @@ for year in monthly_avg.columns:
 plt.title(f'Monthly Average Temperature in {city_name} (Last 5 Years)')
 plt.xlabel('Month')
 plt.ylabel('Temperature (°C)')
-plt.xticks(ticks=range(1, 13), labels=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
+plt.xticks(ticks=range(1, 13), labels=month_names)
 plt.legend(title='Year')
 plt.grid(True)
 
-# Show the plot
-plt.show()
+# Add text to show the mean difference between max and min temperatures
+plt.text(1, min_temps.min() - 2, 
+         f'Mean Temp Difference: {mean_temp_difference:.2f}°C\n'
+         f'Max Temp Month: {max_temp_month_name}\n'
+         f'Min Temp Month: {min_temp_month_name}', 
+         fontsize=10, bbox=dict(facecolor='white', alpha=0.5))
+
+plt.show(block=True)
