@@ -104,12 +104,18 @@ ax2.bar(days_above_half_max_precip.index, days_above_half_max_precip.values, lab
 ax2.bar(max_cont_days.index, max_cont_days.values, label='Max Continuous Days > Half Max Precip', alpha=0.6, color='darkblue')
 
 # Add total precipitation and number of hours labels above each bar
-for i in total_precipitation.index:
-    ax2.text(i, days_with_precip[i] + 0.5, f'{total_precipitation[i]:.2f} mm, {hours_with_precip[i]} hrs', ha='center')
+for i in range(1, 13):  # Loop over all months
+    if i in total_precipitation.index and i in days_with_precip.index and i in hours_with_precip.index:
+        total_precip = total_precipitation[i]
+        precip_hours = hours_with_precip[i]
+        ax2.text(i, days_with_precip[i] + 0.5, f'{total_precip:.2f} mm, {precip_hours} hrs', ha='center')
+    else:
+        ax2.text(i, 1, 'No data', ha='center')
 
 # Add number of days as labels on the max continuous days bar plot
 for i, v in max_cont_days.items():
-    ax2.text(i, v + 0.2, str(v), ha='center')
+    if pd.notna(v):
+        ax2.text(i, v + 0.2, str(v), ha='center')
 
 # Formatting the graph
 ax2.set_xlabel('Month')
