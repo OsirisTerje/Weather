@@ -88,14 +88,14 @@ ax2.bar(days_with_precip.index, days_with_precip.values, label='Days with Precip
 # Bar plot for days with precipitation above half the maximum
 ax2.bar(days_above_half_max_precip.index, days_above_half_max_precip.values, label='Days > Half Max Precip', alpha=0.6, color='dodgerblue')
 
+# Bar plot for maximum continuous days with precipitation above half the maximum
+ax2.bar(max_cont_days.index, max_cont_days.values, label='Max Continuous Days > Half Max Precip', alpha=0.6, color='darkblue')
+
 # Add total precipitation labels above each bar
 for i, v in total_precipitation.items():
     ax2.text(i, days_with_precip[i] + 0.5, f'{v:.2f} mm', ha='center')
 
-# Line plot for maximum continuous days with precipitation above half the maximum
-ax2.plot(max_cont_days.index, max_cont_days.values, label='Max Continuous Days > Half Max Precip', marker='o', color='darkblue', linestyle='--')
-
-# Add number of days as labels on the line plot
+# Add number of days as labels on the max continuous days bar plot
 for i, v in max_cont_days.items():
     ax2.text(i, v + 0.2, str(v), ha='center')
 
