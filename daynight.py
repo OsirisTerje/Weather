@@ -56,6 +56,21 @@ nighttime = data.between_time(time(18, 0), time(6, 0))
 daytime_avg = daytime.groupby('month')['temp'].mean()
 nighttime_avg = nighttime.groupby('month')['temp'].mean()
 
+# Calculate the temperature differences between day and night
+temp_diff = daytime_avg - nighttime_avg
+
+# Calculate the average, max, and min difference, and the months in which they occur
+avg_diff = temp_diff.mean()
+max_diff = temp_diff.max()
+min_diff = temp_diff.min()
+max_diff_month = temp_diff.idxmax()  # Month with max difference
+min_diff_month = temp_diff.idxmin()  # Month with min difference
+
+# Month names
+month_names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+max_diff_month_name = month_names[max_diff_month - 1]
+min_diff_month_name = month_names[min_diff_month - 1]
+
 # Plot the results
 plt.figure(figsize=(10, 6))
 
@@ -69,9 +84,21 @@ plt.plot(nighttime_avg.index, nighttime_avg.values, label='Nighttime Avg Temp', 
 plt.title(f'Daytime and Nighttime Average Temperatures in {city_name} (Last Year)')
 plt.xlabel('Month')
 plt.ylabel('Temperature (°C)')
-plt.xticks(ticks=range(1, 13), labels=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
+plt.xticks(ticks=range(1, 13), labels=month_names)
 plt.legend()
 plt.grid(True)
+
+# Adjust the plot to make space on the right for the text block
+plt.subplots_adjust(right=0.75)
+
+# Add text block to the right, outside the graph
+plt.text(1.05, 0.5, 
+         f'Avg Temp Diff: {avg_diff:.2f}°C\n'
+         f'Max Diff: {max_diff:.2f}°C ({max_diff_month_name})\n'
+         f'Min Diff: {min_diff:.2f}°C ({min_diff_month_name})', 
+         fontsize=10, bbox=dict(facecolor='white', alpha=0.5),
+         transform=plt.gca().transAxes,  # Position relative to axis
+         verticalalignment='center', horizontalalignment='left')  # Align in the center to the right of the graph
 
 # Show the plot
 plt.show()
