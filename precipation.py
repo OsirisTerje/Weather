@@ -51,25 +51,37 @@ if data.empty:
     print(f"No data available for {city_name} in {year}.")
     exit()
 
-# Add hour and month columns
+# Add hour, day, and month columns
 data['hour'] = data.index.hour
 data['month'] = data.index.month
-data['day'] = data.index.day
+data['day'] = data.index.date
 
-# ---- NEW CALCULATIONS FOR ADDITIONAL GRAPH ----
+# ---- CORRECTING DAYS AND HOURS WITH PRECIPITATION ----
 
-# 1) Number of days in the month with precipitation
-days_with_precip = data[data['prcp'] > 0].groupby('month')['prcp'].count()
+# Convert the 'day' column back into a DatetimeIndex for easier grouping by month
+data['day'] = pd.to_datetime(data['day'])
 
-# 2) Total precipitation for each month
+# Group by day and calculate total precipitation for each day
+daily_precip = data.groupby('day')['prcp'].sum()
+
+# Extract the month from the DatetimeIndex and assign it to daily_precip
+daily_precip.index = pd.to_datetime(daily_precip.index)
+
+# Group by month and count the number of days with precipitation > 0
+days_with_precip = daily_precip.groupby(daily_precip.index.month).apply(lambda x: (x > 0).sum())
+
+# Total precipitation for each month
 total_precipitation = data.groupby('month')['prcp'].sum()
 
-# 3) Number of days with precipitation above half the maximum
+# Count the number of hours with precipitation by month
+hours_with_precip = data[data['prcp'] > 0].groupby('month')['prcp'].count()
+
+# Number of days with precipitation above half the maximum
 max_day_precip = data.groupby('month')['prcp'].max()
 half_max_precip = max_day_precip.max() / 2
-days_above_half_max_precip = data[data['prcp'] > half_max_precip].groupby('month')['prcp'].count()
+days_above_half_max_precip = daily_precip.groupby(daily_precip.index.month).apply(lambda x: (x > half_max_precip).sum())
 
-# 4) Max number of continuous days with precipitation above half the maximum
+# Max number of continuous days with precipitation above half the maximum
 def max_continuous_days_above_threshold(df, threshold):
     df['above_threshold'] = df['prcp'] > threshold
     df['block'] = (df['above_threshold'] != df['above_threshold'].shift()).cumsum()
@@ -91,9 +103,9 @@ ax2.bar(days_above_half_max_precip.index, days_above_half_max_precip.values, lab
 # Bar plot for maximum continuous days with precipitation above half the maximum
 ax2.bar(max_cont_days.index, max_cont_days.values, label='Max Continuous Days > Half Max Precip', alpha=0.6, color='darkblue')
 
-# Add total precipitation labels above each bar
-for i, v in total_precipitation.items():
-    ax2.text(i, days_with_precip[i] + 0.5, f'{v:.2f} mm', ha='center')
+# Add total precipitation and number of hours labels above each bar
+for i in total_precipitation.index:
+    ax2.text(i, days_with_precip[i] + 0.5, f'{total_precipitation[i]:.2f} mm, {hours_with_precip[i]} hrs', ha='center')
 
 # Add number of days as labels on the max continuous days bar plot
 for i, v in max_cont_days.items():
