@@ -12,7 +12,7 @@ cities = {
     5: ("Sydney", Point(-33.8688, 151.2093)),
     6: ("Stockholm", Point(59.3293, 18.0686)),
     7: ("Kiev", Point(50.4501, 30.5234)),
-    8: ("Luleå", Point(65.5841, 22.1547))  # Luleå coordinates
+    8: ("Luleå", Point(65.5841, 22.1547))  # Added Luleå with its coordinates
 }
 
 # Display the list of cities
@@ -54,7 +54,6 @@ if data.empty:
 # Add hour and month columns
 data['hour'] = data.index.hour
 data['month'] = data.index.month
-data['day'] = data.index.day
 
 # Define day (6 AM to 6 PM) and night (6 PM to 6 AM) timeframes
 daytime = data.between_time(time(6, 0), time(18, 0))
@@ -97,14 +96,26 @@ month_names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'O
 max_diff_month_name = month_names[max_diff_month - 1]
 min_diff_month_name = month_names[min_diff_month - 1]
 
-# ---- PLOTTING THE FIRST GRAPH ----
+# Find the months with max/min for day and night
+max_day_month = month_names[max_day_temp.idxmax() - 1]
+min_day_month = month_names[min_day_temp.idxmin() - 1]
+max_night_month = month_names[max_night_temp.idxmax() - 1]
+min_night_month = month_names[min_night_temp.idxmin() - 1]
 
+# Find the months with max/min precipitation
+max_day_precip_month = month_names[max_day_precip.idxmax() - 1]
+min_day_precip_month = month_names[min_day_precip.idxmin() - 1]
+max_night_precip_month = month_names[max_night_precip.idxmax() - 1]
+min_night_precip_month = month_names[min_night_precip.idxmin() - 1]
+
+# Plot the results
 fig, ax1 = plt.subplots(figsize=(10, 6))
 
-# Plot for temperatures and precipitation
+# Plot daytime and nighttime temperatures on the primary y-axis
 ax1.plot(daytime_avg.index, daytime_avg.values, label='Daytime Avg Temp', color='orange')
 ax1.plot(nighttime_avg.index, nighttime_avg.values, label='Nighttime Avg Temp', color='blue')
 
+# Set labels for primary y-axis
 ax1.set_xlabel('Month')
 ax1.set_ylabel('Temperature (°C)', color='black')
 ax1.set_xticks(range(1, 13))
@@ -113,14 +124,18 @@ ax1.legend(loc='upper left')
 ax1.grid(True)
 
 # Create a secondary y-axis for precipitation
-ax2_twin = ax1.twinx()
-ax2_twin.plot(daytime_precip.index, daytime_precip.values, label='Daytime Avg Precipitation', linestyle=':', color='green')
-ax2_twin.plot(nighttime_precip.index, nighttime_precip.values, label='Nighttime Avg Precipitation', linestyle=':', color='purple')
-ax2_twin.set_ylabel('Precipitation (mm)', color='black')
-ax2_twin.legend(loc='upper right')
+ax2 = ax1.twinx()
+ax2.plot(daytime_precip.index, daytime_precip.values, label='Daytime Avg Precipitation', linestyle=':', color='green')
+ax2.plot(nighttime_precip.index, nighttime_precip.values, label='Nighttime Avg Precipitation', linestyle=':', color='purple')
 
-# Add text box with summary information
+# Set labels for secondary y-axis
+ax2.set_ylabel('Precipitation (mm)', color='black')
+ax2.legend(loc='upper right')
+
+# Adjust the plot to make space on the right for the text block
 plt.subplots_adjust(right=0.75)
+
+# Add text block to the right, outside the graph
 plt.text(1.05, 0.5, 
          f'Avg Temp Diff: {avg_diff:.2f}°C\n'
          f'Max Diff: {max_diff:.2f}°C ({max_diff_month_name})\n'
@@ -139,5 +154,5 @@ plt.text(1.05, 0.5,
          transform=plt.gca().transAxes,  # Position relative to axis
          verticalalignment='center', horizontalalignment='left')  # Align in the center to the right of the graph
 
-# Show the plot for the first graph
+# Show the plot
 plt.show()
