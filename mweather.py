@@ -77,11 +77,18 @@ plt.xticks(ticks=range(1, 13), labels=month_names)
 plt.legend(title='Year')
 plt.grid(True)
 
+# Adjust the plot to make space on the right for the text block
+plt.subplots_adjust(right=0.75)
+
 # Add text to show the mean difference between max and min temperatures
-plt.text(1, min_temps.min() - 2, 
+plt.text(1.05, 0.5, 
          f'Mean Temp Difference: {mean_temp_difference:.2f}°C\n'
          f'Max Temp Month: {max_temp_month_name}\n'
          f'Min Temp Month: {min_temp_month_name}', 
-         fontsize=10, bbox=dict(facecolor='white', alpha=0.5))
+         fontsize=10, bbox=dict(facecolor='white', alpha=0.5),
+         transform=plt.gca().transAxes,  # Position relative to axis
+         verticalalignment='center', horizontalalignment='left')  # Align in the center to the right of the graph
+
+
 
 plt.show(block=True)
