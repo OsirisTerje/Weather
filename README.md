@@ -65,7 +65,7 @@ This repository contains four Python programs designed to analyze weather data u
 ![](images/PrecipationBrisbane2021.png)
 
 **Oslo 2021**
-![](images/PrecipationOslo2021.png)
+![](images/PrecipitationOslo2021.png)
 
 ---
 
