@@ -86,7 +86,7 @@ This repository contains four Python programs designed to analyze weather data u
 
 ## Requirements
 
-- Python 3.x
+- Python 3.x   (Version 3.12 was used)
 - Libraries:
   - `pandas`
   - `matplotlib`
@@ -96,9 +96,10 @@ To install the required libraries, use the following command:
 
 ```bash
 pip install pandas matplotlib meteostat
-
+```
 
 ## Disclaimer
 
 The code here has been generated using ChatGPT 4o, iterating multiple times, refining the prompts in order to fix errors and add improvements.  
+
 It may be correct.
